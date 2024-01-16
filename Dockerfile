@@ -21,10 +21,10 @@ FROM nginxinc/nginx-unprivileged:1.21-alpine
 ENV SCRUMLR_SHOW_LEGAL_DOCUMENTS=''
 
 # Override the server address for API calls
-ENV SCRUMLR_SERVER_URL='http://bos-lhvwhh.bos01.corp.akamai.com:8080'
+ENV SCRUMLR_SERVER_URL=''
 
 # Override the websocket address for API calls
-ENV SCRUMLR_WEBSOCKET_URL='ws://bos-lhvwhh.bos01.corp.akamai.com:8080'
+ENV SCRUMLR_WEBSOCKET_URL=''
 
 # Server port
 ENV SCRUMLR_LISTEN_PORT='8080'
