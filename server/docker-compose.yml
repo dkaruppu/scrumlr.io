@@ -20,7 +20,7 @@ services:
   database:
     image: postgres:14.1
     ports:
-      - "5432:5432"
+      - "5433:5433"
     environment:
       POSTGRES_USER: &db_user "admin"
       POSTGRES_PASSWORD: "supersecret"

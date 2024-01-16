@@ -19,7 +19,7 @@ export const NewBoard = () => {
   const [columnTemplate, setColumnTemplate] = useState<string | undefined>(undefined);
   const [accessPolicy, setAccessPolicy] = useState(0);
   const [passphrase, setPassphrase] = useState("");
-  const [extendedConfiguration, setExtendedConfiguration] = useState(false);
+  // const [extendedConfiguration, setExtendedConfiguration] = useState(false);
 
   async function onCreateBoard() {
     let additionalAccessPolicyOptions = {};
@@ -51,61 +51,43 @@ export const NewBoard = () => {
           <Link to="/">
             <ScrumlrLogo accentColorClassNames={["accent-color--blue", "accent-color--purple", "accent-color--lilac", "accent-color--pink"]} />
           </Link>
+          <div>
+            <h1>{t("NewBoard.basicConfigurationTitle")}</h1>
 
-          {!extendedConfiguration && (
-            <div>
-              <h1>{t("NewBoard.basicConfigurationTitle")}</h1>
-
-              <div className="new-board__mode-selection">
-                {Object.keys(columnTemplates).map((key) => (
-                  <label key={key} className="new-board__mode">
-                    <input
-                      className="new-board__mode-input"
-                      type="radio"
-                      name="mode"
-                      value={key}
-                      onChange={(e) => setColumnTemplate(e.target.value)}
-                      checked={columnTemplate === key}
-                    />
-                    <div className="new-board__mode-label">
-                      <div>
-                        <div className="new-board__mode-name">{columnTemplates[key].name}</div>
-                        <div className="new-board__mode-description">{columnTemplates[key].description}</div>
-                      </div>
+            <div className="new-board__mode-selection">
+              {Object.keys(columnTemplates).map((key) => (
+                <label key={key} className="new-board__mode">
+                  <input
+                    className="new-board__mode-input"
+                    type="radio"
+                    name="mode"
+                    value={key}
+                    onChange={(e) => setColumnTemplate(e.target.value)}
+                    checked={columnTemplate === key}
+                  />
+                  <div className="new-board__mode-label">
+                    <div>
+                      <div className="new-board__mode-name">{columnTemplates[key].name}</div>
+                      <div className="new-board__mode-description">{columnTemplates[key].description}</div>
                     </div>
-                  </label>
-                ))}
-              </div>
+                  </div>
+                </label>
+              ))}
             </div>
-          )}
-
-          {extendedConfiguration && (
-            <div>
-              <h1>{t("NewBoard.extendedConfigurationTitle")}</h1>
-
-              <TextInputLabel label={t("NewBoard.boardName")}>
-                <TextInput onChange={(e) => setBoardName(e.target.value)} />
-              </TextInputLabel>
-
-              <AccessPolicySelection accessPolicy={accessPolicy} onAccessPolicyChange={setAccessPolicy} passphrase={passphrase} onPassphraseChange={setPassphrase} />
-            </div>
-          )}
+          </div>
+          <div>
+            <h1>{t("NewBoard.boardName")}</h1>
+            <TextInputLabel label="">
+              <TextInput onChange={(e) => setBoardName(e.target.value)} />
+            </TextInputLabel>
+            <AccessPolicySelection accessPolicy={accessPolicy} onAccessPolicyChange={setAccessPolicy} passphrase={passphrase} onPassphraseChange={setPassphrase} />
+          </div>
         </div>
       </div>
       <div className="new-board__actions">
         <Button className="new-board__action" onClick={onCreateBoard} color="primary" disabled={isCreatedBoardDisabled}>
           {t("NewBoard.createNewBoard")}
         </Button>
-        {!extendedConfiguration && (
-          <Button className="new-board__action" variant="outlined" color="primary" disabled={!columnTemplate} onClick={() => setExtendedConfiguration(true)}>
-            {t("NewBoard.extendedConfigurationButton")}
-          </Button>
-        )}
-        {extendedConfiguration && (
-          <Button className="new-board__action" variant="outlined" color="primary" onClick={() => setExtendedConfiguration(false)}>
-            {t("NewBoard.basicConfigurationButton")}
-          </Button>
-        )}
       </div>
     </div>
   );

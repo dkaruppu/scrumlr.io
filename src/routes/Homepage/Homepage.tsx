@@ -1,8 +1,8 @@
 import {ScrumlrLogo} from "components/ScrumlrLogo";
 import "./Homepage.scss";
 import {Trans, useTranslation, withTranslation} from "react-i18next";
-import {ReactComponent as German} from "assets/flags/DE.svg";
-import {ReactComponent as English} from "assets/flags/US.svg";
+// import {ReactComponent as German} from "assets/flags/DE.svg";
+// import {ReactComponent as English} from "assets/flags/US.svg";
 import {ReactComponent as IconArrowRight} from "assets/icon-arrow-right.svg";
 import {Link, useHref} from "react-router-dom";
 import {AppInfo} from "components/AppInfo";
@@ -23,11 +23,11 @@ export const Homepage = withTranslation()(() => {
   const {user} = useAppSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-  const changeLanguage = (language: string) => () => {
-    i18n.changeLanguage(language).then(() => {
-      document.documentElement.lang = i18n.language;
-    });
-  };
+  // const changeLanguage = (language: string) => () => {
+  //   i18n.changeLanguage(language).then(() => {
+  //     document.documentElement.lang = i18n.language;
+  //   });
+  // };
 
   const onLogout = () => {
     dispatch(Actions.signOut());
@@ -50,7 +50,7 @@ export const Homepage = withTranslation()(() => {
           <ScrumlrLogo className="homepage__logo" accentColorClassNames={["accent-color--blue", "accent-color--purple", "accent-color--lilac", "accent-color--pink"]} />
 
           <ul className="homepage__settings">
-            <li>
+            {/* <li>
               <Button leftIcon={<German />} className="homepage__language" hideLabel onClick={changeLanguage("de")}>
                 Deutsch
               </Button>
@@ -59,7 +59,7 @@ export const Homepage = withTranslation()(() => {
               <Button leftIcon={<English />} className="homepage__language" hideLabel onClick={changeLanguage("en")}>
                 English
               </Button>
-            </li>
+            </li> */}
 
             {!!user && (
               <li>
