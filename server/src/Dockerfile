@@ -12,6 +12,7 @@ FROM alpine:3.18
 
 RUN mkdir /app
 COPY --from=0 /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
 COPY --from=0 /go/src/github.com/inovex/scrumlr.io/AkamaiClientCA.crt /usr/local/share/ca-certificates/AkamaiClientCA.crt
 RUN chmod 644 /usr/local/share/ca-certificates/AkamaiClientCA.crt && update-ca-certificates
 COPY --from=0 /go/src/github.com/inovex/scrumlr.io/dkaruppu-sjc-mpd85-20240109.crt ./
