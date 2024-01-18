@@ -2,6 +2,7 @@
 FROM golang:1.19
 WORKDIR /go/src/github.com/inovex/scrumlr.io/
 COPY ./ .
+RUN ls -la
 COPY ../dkaruppu-sjc-mpd85-20240109.crt .
 COPY ../dkaruppu-sjc-mpd85-20240109.key .
 RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a -o main
