@@ -10,8 +10,8 @@ FROM alpine:3.18
 RUN mkdir /app
 WORKDIR /app
 RUN mkdir /cert-key-pair
-COPY --from=0 /go/src/github.com/inovex/scrumlr.io/server/dkaruppu-sjc-mpd85-20240109.crt ./cert-key-pair
-COPY --from=0 /go/src/github.com/inovex/scrumlr.io/server/dkaruppu-sjc-mpd85-20240109.key ./cert-key-pair
+COPY --from=0 /go/src/github.com/inovex/scrumlr.io/dkaruppu-sjc-mpd85-20240109.crt ./cert-key-pair
+COPY --from=0 /go/src/github.com/inovex/scrumlr.io/dkaruppu-sjc-mpd85-20240109.key ./cert-key-pair
 COPY --from=0 /go/src/github.com/inovex/scrumlr.io/main ./
 EXPOSE 8080
 
