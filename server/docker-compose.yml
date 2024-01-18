@@ -38,7 +38,9 @@ services:
       - build
 
   scrumlr:
-    build: ./src
+    build:
+      context: ./
+      dockerfile: ./src/Dockerfile
     command: ./main --disable-check-origin --insecure
     ports:
       - "8080:8080"
