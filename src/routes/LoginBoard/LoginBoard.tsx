@@ -1,5 +1,5 @@
 import {Link, useNavigate} from "react-router-dom";
-import {getRandomName} from "constants/name";
+// import {getRandomName} from "constants/name";
 import {Auth} from "utils/auth";
 import {Toast} from "utils/Toast";
 import {useState} from "react";
@@ -8,9 +8,9 @@ import {Trans, useTranslation} from "react-i18next";
 import {useLocation} from "react-router";
 import {HeroIllustration} from "components/HeroIllustration";
 import {ScrumlrLogo} from "components/ScrumlrLogo";
-import {ReactComponent as RefreshIcon} from "assets/icon-refresh.svg";
+// import {ReactComponent as RefreshIcon} from "assets/icon-refresh.svg";
 import "./LoginBoard.scss";
-import {TextInputAction} from "components/TextInputAction";
+// import {TextInputAction} from "components/TextInputAction";
 import {Button} from "components/Button";
 import {TextInput} from "components/TextInput";
 import {TextInputLabel} from "components/TextInputLabel";
@@ -26,7 +26,7 @@ export const LoginBoard = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [displayName, setDisplayName] = useState(getRandomName());
+  const [displayName, setDisplayName] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(!SHOW_LEGAL_DOCUMENTS);
   const [submitted, setSubmitted] = useState(false);
 
@@ -80,11 +80,6 @@ export const LoginBoard = () => {
                   }}
                   maxLength={20}
                   aria-invalid={!displayName}
-                  actions={
-                    <TextInputAction title={t("LoginBoard.generateRandomName")} onClick={() => setDisplayName(getRandomName())}>
-                      <RefreshIcon />
-                    </TextInputAction>
-                  }
                 />
               </div>
               {!displayName && <ValidationError>{t("LoginBoard.usernameValidationError")}</ValidationError>}

@@ -24,6 +24,12 @@ export const exportAsJSON = async (id: string, name?: string) => {
   saveAs(blob, `${fileName(name ?? DEFAULT_BOARD_NAME)}.json`);
 };
 
+export const exportToConfluence = async (id: string, confluencePageId: string) => {
+  const response = await API.exportBoardToConfluence(id, confluencePageId);
+  const json = await response.json();
+  return json;
+};
+
 export const getNoteVotes = (noteId: string, votings: VotingType[]) => votings[0].votes?.votesPerNote[noteId]?.total ?? 0;
 
 export const compareNotes = (a: {id: string; position: {rank: number}}, b: {id: string; position: {rank: number}}, votings: VotingType[]) => {

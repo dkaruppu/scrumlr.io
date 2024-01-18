@@ -14,9 +14,11 @@ import {generateRandomString} from "utils/random";
 import {Toggle} from "components/Toggle";
 import {ConfirmationDialog} from "components/ConfirmationDialog";
 import {isEqual} from "underscore";
+import {saveToStorage} from "utils/storage";
 import {SettingsButton} from "../Components/SettingsButton";
 import {SettingsInput} from "../Components/SettingsInput";
 import "./BoardSettings.scss";
+import {CONFLUENCE_PAGE_ID_STORAGE_KEY} from "constants/storage";
 
 export const BoardSettings = () => {
   const {t} = useTranslation();
@@ -26,11 +28,13 @@ export const BoardSettings = () => {
       board: applicationState.board.data!,
       me: applicationState.participants?.self,
       currentUserIsModerator: applicationState.participants?.self.role === "OWNER" || applicationState.participants?.self.role === "MODERATOR",
+      confluencePage: applicationState.confluencePage,
     }),
     isEqual
   );
 
   const [boardName, setBoardName] = useState<string>(state.board.name ?? "");
+  const [confluencePageId, setConfluencePageId] = useState<string>(state.confluencePage ?? "");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmationDialog, setShowConfirmationDialog] = useState<boolean>(false);
@@ -46,6 +50,11 @@ export const BoardSettings = () => {
   useEffect(() => {
     setIsProtected(state.board.accessPolicy === "BY_PASSPHRASE");
   }, [state.board.accessPolicy]);
+
+  const updateConfluencePageId = () => {
+    store.dispatch(Actions.addPage(confluencePageId));
+    saveToStorage(CONFLUENCE_PAGE_ID_STORAGE_KEY, confluencePageId);
+  };
 
   const handleSetPassword = (newPassword: string) => {
     setPassword(newPassword);
@@ -133,6 +142,15 @@ export const BoardSettings = () => {
             label={t("BoardSettings.BoardName")}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setBoardName(e.target.value)}
             submit={() => store.dispatch(Actions.editBoard({name: boardName}))}
+            disabled={!state.currentUserIsModerator}
+            placeholder={DEFAULT_BOARD_NAME}
+          />
+          <SettingsInput
+            value={confluencePageId}
+            id="boardSettingsConfluencePageId"
+            label={t("BoardSettings.ConfluencePageId")}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setConfluencePageId(e.target.value)}
+            submit={() => updateConfluencePageId()}
             disabled={!state.currentUserIsModerator}
             placeholder={DEFAULT_BOARD_NAME}
           />

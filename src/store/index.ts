@@ -28,6 +28,7 @@ import {reactionReducer} from "./reducer/reaction";
 import {passReactionMiddleware} from "./middleware/reaction";
 import {passSkinToneMiddleware} from "./middleware/skinTone";
 import {skinToneReducer} from "./reducer/skinTone";
+import {confluencePageReducer} from "./reducer/confluencePage";
 
 const parseMiddleware = (stateAPI: MiddlewareAPI<Dispatch, ApplicationState>) => (dispatch: Dispatch) => (action: ReduxAction) => {
   action.context = {
@@ -69,6 +70,7 @@ const rootReducer = combineReducers<ApplicationState>({
   assignments: assignmentReducer,
   boardReactions: boardReactionReducer,
   skinTone: skinToneReducer,
+  confluencePage: confluencePageReducer,
 });
 
 const store = configureStore({

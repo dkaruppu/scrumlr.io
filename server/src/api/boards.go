@@ -1,12 +1,16 @@
 package api
 
 import (
+	"bytes"
 	"database/sql"
 	"encoding/csv"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
@@ -258,14 +262,14 @@ func (s *Server) deleteTimer(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) incrementTimer(w http.ResponseWriter, r *http.Request) {
-  boardId := r.Context().Value("Board").(uuid.UUID)
-  board, err := s.boards.IncrementTimer(r.Context(), boardId)
-  if err != nil {
-    common.Throw(w, r, err)
-    return
-  }
-  render.Status(r, http.StatusOK)
-  render.Respond(w, r, board)
+	boardId := r.Context().Value("Board").(uuid.UUID)
+	board, err := s.boards.IncrementTimer(r.Context(), boardId)
+	if err != nil {
+		common.Throw(w, r, err)
+		return
+	}
+	render.Status(r, http.StatusOK)
+	render.Respond(w, r, board)
 }
 
 func (s *Server) exportBoard(w http.ResponseWriter, r *http.Request) {
@@ -375,6 +379,152 @@ func (s *Server) exportBoard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	render.Status(r, http.StatusNotAcceptable)
+	render.Respond(w, r, nil)
+}
+
+func (s *Server) exportBoardToConfluence(w http.ResponseWriter, r *http.Request) {
+	log := logger.FromRequest(r)
+	log.Info("Export Board to Confluence")
+	boardId := r.Context().Value("Board").(uuid.UUID)
+	board, _, _, _, _, _, _, _, _, err := s.boards.FullBoard(r.Context(), boardId)
+	if err != nil {
+		common.Throw(w, r, err)
+		return
+	}
+
+	// parse request
+	var requestBody dto.ExportToConfluencePageRequest
+	if err := render.Decode(r, &requestBody); err != nil {
+		common.Throw(w, r, common.BadRequestError(err))
+		return
+	}
+	pageId := requestBody.PageId
+
+	if pageId == "" || !common.IsNumeric(pageId) {
+		common.Throw(w, r, common.BadRequestError(errors.New("page id cannot be empty or a non-number value")))
+		return
+	}
+
+	customTlsConfig, err := common.GetTlsConfig()
+
+	if err != nil {
+		log.Error(err)
+		common.Throw(w, r, common.APIError{Err: err, ErrorText: "error when reading the TLS certs"})
+		return
+	}
+
+	customTransport := &http.Transport{
+		TLSClientConfig: customTlsConfig,
+	}
+	customClient := &http.Client{
+		Transport: customTransport,
+	}
+
+	confluenceApiBaseUrl := "https://api.collaborate.akamai.com/confluence/rest/api/content/"
+	confluenceGetPageVersionApiUrl := confluenceApiBaseUrl + pageId + "?expand=version"
+	confluenceGetPageBodyApiUrl := confluenceApiBaseUrl + pageId + "?expand=body.storage"
+	confluenceUpdatePageApiUrl := confluenceApiBaseUrl + pageId
+
+	// Get Version
+	confluencePageVersionResponse, err := customClient.Get(confluenceGetPageVersionApiUrl)
+	if err != nil {
+		log.Error(err)
+		common.Throw(w, r, common.APIError{Err: err, ErrorText: "error calling the confluence API at the endpoint : " + confluenceGetPageVersionApiUrl})
+		return
+	}
+
+	defer confluencePageVersionResponse.Body.Close()
+	responseBody, err := io.ReadAll(confluencePageVersionResponse.Body)
+	if err != nil {
+		log.Error(err)
+		common.Throw(w, r, common.APIError{Err: err, ErrorText: "error reading the response from confluence API at the endpoint : " + confluenceGetPageVersionApiUrl})
+		return
+	}
+
+	var confluencePageForVersion dto.ConfluencePage
+
+	err = json.Unmarshal([]byte(responseBody), &confluencePageForVersion)
+	if err != nil {
+		log.Error(err)
+		common.Throw(w, r, common.APIError{Err: err, ErrorText: "error parsing the response from confluence API at the endpoint : " + confluenceGetPageVersionApiUrl})
+		return
+	}
+	// Get Body
+	confluenceResponseForBody, err := customClient.Get(confluenceGetPageBodyApiUrl)
+	if err != nil {
+		log.Error(err)
+		common.Throw(w, r, common.APIError{Err: err, ErrorText: "error calling the confluence API at the endpoint : " + confluenceGetPageBodyApiUrl})
+		return
+	}
+
+	defer confluenceResponseForBody.Body.Close()
+	responseBody, err = io.ReadAll(confluenceResponseForBody.Body)
+	if err != nil {
+		log.Error(err)
+		common.Throw(w, r, common.APIError{Err: err, ErrorText: "error reading the response from confluence API at the endpoint : " + confluenceGetPageBodyApiUrl})
+		return
+	}
+
+	var confluencePageForBody dto.ConfluencePage
+
+	err = json.Unmarshal([]byte(responseBody), &confluencePageForBody)
+	if err != nil {
+		log.Error(err)
+		common.Throw(w, r, common.APIError{Err: err, ErrorText: "error parsing the response from confluence API at the endpoint : " + confluenceGetPageBodyApiUrl})
+		return
+	}
+
+	// Update Confluence Page
+	newConfluencePageVersion := dto.ConfluencePageVersion{
+		Number:  confluencePageForVersion.Version.Number + 1,
+		Message: "Updated by Scrumlr",
+	}
+	updateDate := time.Now().Format("2006-01-02")
+	boardUrl := "http://bos-lhvwhh.bos01.corp.akamai.com/board/" + boardId.String() // TODO: This need to be updated
+	newContentToBeAdded := "<p>Link To <a href=\"" + boardUrl + "\" target=\"_blank\">" + *board.Name + "</a>, Completed On " + updateDate + "</p>"
+	newConfluencePageStorage := dto.ConfluencePageStorage{
+		Value:          confluencePageForBody.Body.Storage.Value + newContentToBeAdded,
+		Representation: confluencePageForBody.Body.Storage.Representation,
+	}
+
+	newConfluencePageBody := dto.ConfluencePageBody{
+		Storage: newConfluencePageStorage,
+	}
+
+	updateConfluencePageRequest := dto.UpdateConfluencePageRequest{
+		Version: newConfluencePageVersion,
+		Title:   confluencePageForVersion.Title,
+		Type:    confluencePageForVersion.Type,
+		Body:    newConfluencePageBody,
+	}
+	jsonRequestBody, err := json.Marshal(updateConfluencePageRequest)
+	if err != nil {
+		log.Error(err)
+		common.Throw(w, r, common.APIError{Err: err, ErrorText: "error marshalling data into update confluence page API request"})
+		return
+	}
+
+	updateConfluencePageHttpRequest, _ := http.NewRequest("PUT", confluenceUpdatePageApiUrl, bytes.NewBuffer(jsonRequestBody))
+	updateConfluencePageHttpRequest.Header.Set("Content-Type", "application/json")
+
+	_, err = customClient.Do(updateConfluencePageHttpRequest)
+	if err != nil {
+		log.Error(err)
+		common.Throw(w, r, common.APIError{Err: err, ErrorText: "error calling the confluence API at the endpoint : " + confluenceGetPageBodyApiUrl})
+		return
+	}
+	if r.Header.Get("Accept") == "application/json; charset=utf-8" {
+		render.Status(r, http.StatusOK)
+		render.Respond(w, r, struct {
+			BoardId            string
+			UpdatedPageVersion int
+		}{
+			BoardId:            boardId.String(),
+			UpdatedPageVersion: newConfluencePageVersion.Number,
+		})
+		return
+	}
 	render.Status(r, http.StatusNotAcceptable)
 	render.Respond(w, r, nil)
 }

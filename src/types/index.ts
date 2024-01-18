@@ -11,6 +11,7 @@ import {AssignmentsState} from "./assignment";
 import {ReactionState} from "./reaction";
 import {BoardReactionState} from "./boardReaction";
 import {SkinToneState} from "./skinTone";
+import {ConfluencePageState} from "./confluencePage";
 
 export interface ApplicationState {
   auth: AuthState;
@@ -26,4 +27,5 @@ export interface ApplicationState {
   assignments: AssignmentsState;
   boardReactions: BoardReactionState;
   skinTone: SkinToneState;
+  confluencePage: ConfluencePageState;
 }

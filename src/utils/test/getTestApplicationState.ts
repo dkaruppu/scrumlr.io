@@ -181,4 +181,5 @@ export default (overwrite?: Partial<ApplicationState>): ApplicationState => ({
     component: "",
   },
   ...overwrite,
+  confluencePage: "",
 });

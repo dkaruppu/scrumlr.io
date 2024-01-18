@@ -109,6 +109,34 @@ export const BoardAPI = {
       throw new Error(`unable to create board: ${error}`);
     }
   },
+  /**
+   * Exports the board link to confluence by the specified id.
+   *
+   * @param board the board id
+   * @param confluencePage the confluene page id
+   *
+   * @returns the response of the fetch call
+   */
+  exportBoardToConfluence: async (board: string, confluencePage: string) => {
+    try {
+      const response = await fetch(`${SERVER_HTTP_URL}/boards/${board}/export/confluence`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json; charset=utf-8",
+        },
+        credentials: "include",
+        body: JSON.stringify({pageId: confluencePage}),
+      });
+
+      if (response.status === 200) {
+        return response;
+      }
+
+      throw new Error(`unable to export board to confluence with response status ${response.status}`);
+    } catch (error) {
+      throw new Error(`unable to create board: ${error}`);
+    }
+  },
   setTimer: async (id: string, minutes: number) => {
     try {
       const response = await fetch(`${SERVER_HTTP_URL}/boards/${id}/timer`, {

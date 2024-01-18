@@ -1044,6 +1044,84 @@
 					]
 				},
 				{
+					"name": "Export board to confluence",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json; charset=utf-8",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/boards/{{board_id}}/export/confluence",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"boards",
+								"{{board_id}}",
+								"export",
+								"confluence"
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"pageId\": \"<Enter the confluence page id here>\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"description": "Export the board id to a confluence page data, given the page id in the request body. The `Content-Type` of the response will be `application/json`"
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/boards/{board}/export/confluence",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"boards",
+										"{board}",
+										"export",
+										"confluence"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 23 Jan 2022 14:42:09 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1030"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"board\": {\n        \"id\": \"85ec5a10-9788-4df2-9647-0c7260cb07f7\"}"
+						}
+					]
+				},
+				{
 					"name": "Start a 5 minute timer",
 					"request": {
 						"method": "POST",

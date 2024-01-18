@@ -11,6 +11,7 @@ import {AssignmentAction, AssignmentActionFactory, AssignmentReduxAction} from "
 import {ReactionAction, ReactionActionFactory, ReactionReduxAction} from "./reaction";
 import {BoardReactionAction, BoardReactionActionFactory, BoardReactionReduxAction} from "./boardReaction";
 import {SkinToneAction, SkinToneActionFactory, SkinToneReduxAction} from "./skinTone";
+import {ConfluencePageAction, ConfluencePageActionFactory, ConfluencePageReduxAction} from "./confluencePage";
 
 /** This object lists all internal Redux Action types. */
 export const Action = {
@@ -27,6 +28,7 @@ export const Action = {
   ...AssignmentAction,
   ...BoardReactionAction,
   ...SkinToneAction,
+  ...ConfluencePageAction,
 };
 
 /** Factory or creator class of internal Redux actions. */
@@ -45,6 +47,7 @@ export const Actions = {
   ...AssignmentActionFactory,
   ...BoardReactionActionFactory,
   ...SkinToneActionFactory,
+  ...ConfluencePageActionFactory,
 };
 
 /** The types of all application internal redux actions. */
@@ -62,4 +65,5 @@ export type ReduxAction = {context: {board?: string; user?: string; voting?: str
   | AssignmentReduxAction
   | BoardReactionReduxAction
   | SkinToneReduxAction
+  | ConfluencePageReduxAction
 );

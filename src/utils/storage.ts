@@ -12,3 +12,8 @@ export const getFromStorage = (key: string): string | null => localStorage.getIt
  * Retrieves number from local storage by key. Returns alternative value on error.
  */
 export const getNumberFromStorage = (key: string, defaultValue: number): number => JSON.parse(localStorage.getItem(key) ?? String(defaultValue)) || defaultValue;
+
+/**
+ * Removes key value pair from local storage.
+ */
+export const removeFromStorage = (key: string): void => localStorage.removeItem(key);

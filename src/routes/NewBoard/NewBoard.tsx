@@ -6,6 +6,10 @@ import {AccessPolicy} from "types/board";
 import {useTranslation} from "react-i18next";
 import {useNavigate} from "react-router";
 import {Link} from "react-router-dom";
+import {Actions} from "store/action";
+import {useDispatch} from "react-redux";
+import {removeFromStorage, saveToStorage} from "utils/storage";
+import {CONFLUENCE_PAGE_ID_STORAGE_KEY} from "constants/storage";
 import {columnTemplates} from "./columnTemplates";
 import {TextInputLabel} from "../../components/TextInputLabel";
 import {TextInput} from "../../components/TextInput";
@@ -15,13 +19,18 @@ import {ScrumlrLogo} from "../../components/ScrumlrLogo";
 export const NewBoard = () => {
   const {t} = useTranslation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [boardName, setBoardName] = useState<string | undefined>();
+  const [confluencePageId, setConfluencePageId] = useState<string | undefined>();
   const [columnTemplate, setColumnTemplate] = useState<string | undefined>(undefined);
   const [accessPolicy, setAccessPolicy] = useState(0);
   const [passphrase, setPassphrase] = useState("");
   // const [extendedConfiguration, setExtendedConfiguration] = useState(false);
+  removeFromStorage(CONFLUENCE_PAGE_ID_STORAGE_KEY);
 
   async function onCreateBoard() {
+    saveToStorage(CONFLUENCE_PAGE_ID_STORAGE_KEY, confluencePageId!);
+    dispatch(Actions.addPage(confluencePageId!));
     let additionalAccessPolicyOptions = {};
     if (accessPolicy === AccessPolicy.BY_PASSPHRASE && Boolean(passphrase)) {
       additionalAccessPolicyOptions = {
@@ -42,7 +51,7 @@ export const NewBoard = () => {
     }
   }
 
-  const isCreatedBoardDisabled = !columnTemplate || (accessPolicy === AccessPolicy.BY_PASSPHRASE && !passphrase);
+  const isCreatedBoardDisabled = !columnTemplate || !boardName || !confluencePageId || (accessPolicy === AccessPolicy.BY_PASSPHRASE && !passphrase);
 
   return (
     <div className="new-board__wrapper">
@@ -79,6 +88,10 @@ export const NewBoard = () => {
             <h1>{t("NewBoard.boardName")}</h1>
             <TextInputLabel label="">
               <TextInput onChange={(e) => setBoardName(e.target.value)} />
+            </TextInputLabel>
+            <h1>{t("NewBoard.confluencePageId")}</h1>
+            <TextInputLabel label="">
+              <TextInput onChange={(e) => setConfluencePageId(e.target.value)} />
             </TextInputLabel>
             <AccessPolicySelection accessPolicy={accessPolicy} onAccessPolicyChange={setAccessPolicy} passphrase={passphrase} onPassphraseChange={setPassphrase} />
           </div>

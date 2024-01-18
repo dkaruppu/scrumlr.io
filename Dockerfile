@@ -18,13 +18,13 @@ RUN yarn build
 FROM nginxinc/nginx-unprivileged:1.21-alpine
 
 # Toggle visibility of cookie policy, privacy policy, and terms & conditions
-ENV SCRUMLR_SHOW_LEGAL_DOCUMENTS=''
+ENV SCRUMLR_SHOW_LEGAL_DOCUMENTS='FALSE'
 
 # Override the server address for API calls
-ENV SCRUMLR_SERVER_URL=''
+ENV SCRUMLR_SERVER_URL='http://bos-lhvwhh.bos01.corp.akamai.com:8080'
 
 # Override the websocket address for API calls
-ENV SCRUMLR_WEBSOCKET_URL=''
+ENV SCRUMLR_WEBSOCKET_URL='ws://bos-lhvwhh.bos01.corp.akamai.com:8080'
 
 # Server port
 ENV SCRUMLR_LISTEN_PORT='8080'
