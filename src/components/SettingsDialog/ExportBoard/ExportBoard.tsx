@@ -9,12 +9,11 @@ import {useAppSelector} from "store";
 import {exportAsJSON, exportAsCSV, getMarkdownExport, exportToConfluence} from "utils/export";
 import {Toast} from "utils/Toast";
 import {TOAST_TIMER_SHORT} from "constants/misc";
-import {getFromStorage, saveToStorage} from "utils/storage";
+import {IS_EXPORTED_TO_CONFLUENCE_STORAGE_KEY} from "constants/storage";
 import {SettingsButton} from "../Components/SettingsButton";
 import {ExportHintHiddenColumns} from "./ExportHintHiddenColumns";
 import "./ExportBoard.scss";
 import "../SettingsDialog.scss";
-import {IS_EXPORTED_TO_CONFLUENCE_STORAGE_KEY} from "constants/storage";
 
 export const ExportBoard: VFC = () => {
   const {t} = useTranslation();
@@ -23,7 +22,7 @@ export const ExportBoard: VFC = () => {
   const boardName = useAppSelector((state) => state.board.data!.name);
   const columns = useAppSelector((state) => state.columns);
   const confluencePageTitle = useAppSelector((state) => state.confluencePage);
-  const [isBoardExportedToConfluence, setBoardExportedToConfluence] = useState(getFromStorage(IS_EXPORTED_TO_CONFLUENCE_STORAGE_KEY) === "true");
+  const [isBoardExportedToConfluence, setBoardExportedToConfluence] = useState(sessionStorage.getItem(IS_EXPORTED_TO_CONFLUENCE_STORAGE_KEY) === "true");
 
   return (
     <div data-testid="export" className="settings-dialog__container">
@@ -62,13 +61,13 @@ export const ExportBoard: VFC = () => {
                 .then((result) => {
                   if (result.BoardId) {
                     setBoardExportedToConfluence(true);
-                    saveToStorage(IS_EXPORTED_TO_CONFLUENCE_STORAGE_KEY, "true");
+                    sessionStorage.setItem(IS_EXPORTED_TO_CONFLUENCE_STORAGE_KEY, "true");
                     Toast.success({title: t("ExportBoardOption.exportToConfluenceSuccess"), autoClose: TOAST_TIMER_SHORT});
                   }
                 })
                 .catch(() => {
                   Toast.error({title: t("ExportBoardOption.exportToConfluenceFailure"), autoClose: TOAST_TIMER_SHORT});
-                  saveToStorage(IS_EXPORTED_TO_CONFLUENCE_STORAGE_KEY, "false");
+                  sessionStorage.setItem(IS_EXPORTED_TO_CONFLUENCE_STORAGE_KEY, "false");
                   setBoardExportedToConfluence(false);
                 });
             else Toast.info({title: t("ExportBoardOption.alreadyExportedToConfluence"), autoClose: TOAST_TIMER_SHORT});

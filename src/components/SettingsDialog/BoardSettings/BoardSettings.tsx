@@ -15,10 +15,10 @@ import {Toggle} from "components/Toggle";
 import {ConfirmationDialog} from "components/ConfirmationDialog";
 import {isEqual} from "underscore";
 import {saveToStorage} from "utils/storage";
+import {CONFLUENCE_PAGE_TITLE_STORAGE_KEY} from "constants/storage";
 import {SettingsButton} from "../Components/SettingsButton";
 import {SettingsInput} from "../Components/SettingsInput";
 import "./BoardSettings.scss";
-import {CONFLUENCE_PAGE_TITLE_STORAGE_KEY} from "constants/storage";
 
 export const BoardSettings = () => {
   const {t} = useTranslation();
