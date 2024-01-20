@@ -62,7 +62,7 @@ export const ExportBoard: VFC = () => {
               exportToConfluence(boardId, confluencePageTitle)
                 .then((result) => {
                   if (result.BoardId) {
-                    setBoardExportedToConfluence(true);
+                    setBoardExportedToConfluence(JSON.stringify({boardId, exported: true}));
                     sessionStorage.setItem(IS_EXPORTED_TO_CONFLUENCE_STORAGE_KEY, JSON.stringify({boardId, exported: true}));
                     Toast.success({title: t("ExportBoardOption.exportToConfluenceSuccess"), autoClose: TOAST_TIMER_SHORT});
                   }
@@ -70,7 +70,7 @@ export const ExportBoard: VFC = () => {
                 .catch(() => {
                   Toast.error({title: t("ExportBoardOption.exportToConfluenceFailure"), autoClose: TOAST_TIMER_SHORT});
                   sessionStorage.setItem(IS_EXPORTED_TO_CONFLUENCE_STORAGE_KEY, JSON.stringify({boardId, exported: false}));
-                  setBoardExportedToConfluence(false);
+                  setBoardExportedToConfluence(JSON.stringify({boardId, exported: false}));
                 });
             else Toast.info({title: t("ExportBoardOption.alreadyExportedToConfluence"), autoClose: TOAST_TIMER_SHORT});
           }}
