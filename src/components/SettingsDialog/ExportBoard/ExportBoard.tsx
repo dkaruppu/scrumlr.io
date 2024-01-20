@@ -17,12 +17,14 @@ import "../SettingsDialog.scss";
 
 export const ExportBoard: VFC = () => {
   const {t} = useTranslation();
-
+  const boardExportToConfluenceStatus = sessionStorage.getItem(IS_EXPORTED_TO_CONFLUENCE_STORAGE_KEY)
+    ? JSON.parse(sessionStorage.getItem(IS_EXPORTED_TO_CONFLUENCE_STORAGE_KEY)!)
+    : null;
   const boardId = useAppSelector((state) => state.board.data!.id);
   const boardName = useAppSelector((state) => state.board.data!.name);
   const columns = useAppSelector((state) => state.columns);
   const confluencePageTitle = useAppSelector((state) => state.confluencePage);
-  const [isBoardExportedToConfluence, setBoardExportedToConfluence] = useState(sessionStorage.getItem(IS_EXPORTED_TO_CONFLUENCE_STORAGE_KEY) === "true");
+  const [boardExportedToConfluence, setBoardExportedToConfluence] = useState(boardExportToConfluenceStatus);
 
   return (
     <div data-testid="export" className="settings-dialog__container">
@@ -56,18 +58,18 @@ export const ExportBoard: VFC = () => {
           icon={ClipboardIcon}
           className="export-board__button-reverse-order"
           onClick={() => {
-            if (!isBoardExportedToConfluence)
+            if (boardExportedToConfluence.boardId !== boardId && !boardExportedToConfluence.exported)
               exportToConfluence(boardId, confluencePageTitle)
                 .then((result) => {
                   if (result.BoardId) {
                     setBoardExportedToConfluence(true);
-                    sessionStorage.setItem(IS_EXPORTED_TO_CONFLUENCE_STORAGE_KEY, "true");
+                    sessionStorage.setItem(IS_EXPORTED_TO_CONFLUENCE_STORAGE_KEY, JSON.stringify({boardId, exported: true}));
                     Toast.success({title: t("ExportBoardOption.exportToConfluenceSuccess"), autoClose: TOAST_TIMER_SHORT});
                   }
                 })
                 .catch(() => {
                   Toast.error({title: t("ExportBoardOption.exportToConfluenceFailure"), autoClose: TOAST_TIMER_SHORT});
-                  sessionStorage.setItem(IS_EXPORTED_TO_CONFLUENCE_STORAGE_KEY, "false");
+                  sessionStorage.setItem(IS_EXPORTED_TO_CONFLUENCE_STORAGE_KEY, JSON.stringify({boardId, exported: false}));
                   setBoardExportedToConfluence(false);
                 });
             else Toast.info({title: t("ExportBoardOption.alreadyExportedToConfluence"), autoClose: TOAST_TIMER_SHORT});
