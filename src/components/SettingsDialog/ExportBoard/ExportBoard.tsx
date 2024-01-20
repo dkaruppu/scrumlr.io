@@ -58,7 +58,7 @@ export const ExportBoard: VFC = () => {
           icon={ClipboardIcon}
           className="export-board__button-reverse-order"
           onClick={() => {
-            if (!boardExportedToConfluence || (boardExportedToConfluence.boardId !== boardId && !boardExportedToConfluence.exported))
+            if (!boardExportedToConfluence || boardExportedToConfluence.boardId !== boardId || !boardExportedToConfluence.exported)
               exportToConfluence(boardId, confluencePageTitle)
                 .then((result) => {
                   if (result.BoardId) {
