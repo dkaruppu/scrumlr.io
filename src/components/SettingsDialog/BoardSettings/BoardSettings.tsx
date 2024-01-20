@@ -18,7 +18,7 @@ import {saveToStorage} from "utils/storage";
 import {SettingsButton} from "../Components/SettingsButton";
 import {SettingsInput} from "../Components/SettingsInput";
 import "./BoardSettings.scss";
-import {CONFLUENCE_PAGE_ID_STORAGE_KEY} from "constants/storage";
+import {CONFLUENCE_PAGE_TITLE_STORAGE_KEY} from "constants/storage";
 
 export const BoardSettings = () => {
   const {t} = useTranslation();
@@ -34,7 +34,7 @@ export const BoardSettings = () => {
   );
 
   const [boardName, setBoardName] = useState<string>(state.board.name ?? "");
-  const [confluencePageId, setConfluencePageId] = useState<string>(state.confluencePage ?? "");
+  const [confluencePageTitle, setConfluencePageTitle] = useState<string>(state.confluencePage ?? "");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmationDialog, setShowConfirmationDialog] = useState<boolean>(false);
@@ -51,9 +51,9 @@ export const BoardSettings = () => {
     setIsProtected(state.board.accessPolicy === "BY_PASSPHRASE");
   }, [state.board.accessPolicy]);
 
-  const updateConfluencePageId = () => {
-    store.dispatch(Actions.addPage(confluencePageId));
-    saveToStorage(CONFLUENCE_PAGE_ID_STORAGE_KEY, confluencePageId);
+  const updateConfluencePageTitle = () => {
+    store.dispatch(Actions.addPage(confluencePageTitle));
+    saveToStorage(CONFLUENCE_PAGE_TITLE_STORAGE_KEY, confluencePageTitle);
   };
 
   const handleSetPassword = (newPassword: string) => {
@@ -146,11 +146,11 @@ export const BoardSettings = () => {
             placeholder={DEFAULT_BOARD_NAME}
           />
           <SettingsInput
-            value={confluencePageId}
-            id="boardSettingsConfluencePageId"
-            label={t("BoardSettings.ConfluencePageId")}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setConfluencePageId(e.target.value)}
-            submit={() => updateConfluencePageId()}
+            value={confluencePageTitle}
+            id="boardSettingsConfluencePageTitle"
+            label={t("BoardSettings.confluencePageTitle")}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setConfluencePageTitle(e.target.value)}
+            submit={() => updateConfluencePageTitle()}
             disabled={!state.currentUserIsModerator}
             placeholder={DEFAULT_BOARD_NAME}
           />

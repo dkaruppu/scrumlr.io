@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"time"
 
@@ -399,10 +400,10 @@ func (s *Server) exportBoardToConfluence(w http.ResponseWriter, r *http.Request)
 		common.Throw(w, r, common.BadRequestError(err))
 		return
 	}
-	pageId := requestBody.PageId
+	pageTitle := requestBody.PageTitle
 
-	if pageId == "" || !common.IsNumeric(pageId) {
-		common.Throw(w, r, common.BadRequestError(errors.New("page id cannot be empty or a non-number value")))
+	if pageTitle == "" {
+		common.Throw(w, r, common.BadRequestError(errors.New("page title cannot be empty")))
 		return
 	}
 
@@ -422,6 +423,41 @@ func (s *Server) exportBoardToConfluence(w http.ResponseWriter, r *http.Request)
 	}
 
 	confluenceApiBaseUrl := "https://api.collaborate.akamai.com/confluence/rest/api/content/"
+
+	confluenceGetPageResultsApiUrl := confluenceApiBaseUrl + "?title=" + url.QueryEscape(pageTitle)
+
+	// Get Page Results
+	confluencePageResultsResponse, err := customClient.Get(confluenceGetPageResultsApiUrl)
+	if err != nil {
+		log.Error(err)
+		common.Throw(w, r, common.APIError{Err: err, ErrorText: "error calling the confluence API at the endpoint : " + confluenceGetPageResultsApiUrl})
+		return
+	}
+
+	defer confluencePageResultsResponse.Body.Close()
+	log.Info(confluencePageResultsResponse.Body)
+	responseBody, err := io.ReadAll(confluencePageResultsResponse.Body)
+	if err != nil {
+		log.Error(err)
+		common.Throw(w, r, common.APIError{Err: err, ErrorText: "error reading the response from confluence API at the endpoint : " + confluenceGetPageResultsApiUrl})
+		return
+	}
+
+	var confluencePageResults dto.ConfluencePageResults
+
+	err = json.Unmarshal([]byte(responseBody), &confluencePageResults)
+	if err != nil {
+		log.Error(err)
+		common.Throw(w, r, common.APIError{Err: err, ErrorText: "error parsing the response from confluence API at the endpoint : " + confluenceGetPageResultsApiUrl})
+		return
+	}
+
+	if confluencePageResults.Size == 0 {
+		common.Throw(w, r, common.BadRequestError(errors.New("this page title is invalid")))
+		return
+	}
+	pageId := confluencePageResults.Results[0].ID
+
 	confluenceGetPageVersionApiUrl := confluenceApiBaseUrl + pageId + "?expand=version"
 	confluenceGetPageBodyApiUrl := confluenceApiBaseUrl + pageId + "?expand=body.storage"
 	confluenceUpdatePageApiUrl := confluenceApiBaseUrl + pageId
@@ -435,7 +471,7 @@ func (s *Server) exportBoardToConfluence(w http.ResponseWriter, r *http.Request)
 	}
 
 	defer confluencePageVersionResponse.Body.Close()
-	responseBody, err := io.ReadAll(confluencePageVersionResponse.Body)
+	responseBody, err = io.ReadAll(confluencePageVersionResponse.Body)
 	if err != nil {
 		log.Error(err)
 		common.Throw(w, r, common.APIError{Err: err, ErrorText: "error reading the response from confluence API at the endpoint : " + confluenceGetPageVersionApiUrl})
@@ -450,6 +486,8 @@ func (s *Server) exportBoardToConfluence(w http.ResponseWriter, r *http.Request)
 		common.Throw(w, r, common.APIError{Err: err, ErrorText: "error parsing the response from confluence API at the endpoint : " + confluenceGetPageVersionApiUrl})
 		return
 	}
+	pageVersion := confluencePageForVersion.Version.Number
+
 	// Get Body
 	confluenceResponseForBody, err := customClient.Get(confluenceGetPageBodyApiUrl)
 	if err != nil {
@@ -477,7 +515,7 @@ func (s *Server) exportBoardToConfluence(w http.ResponseWriter, r *http.Request)
 
 	// Update Confluence Page
 	newConfluencePageVersion := dto.ConfluencePageVersion{
-		Number:  confluencePageForVersion.Version.Number + 1,
+		Number:  pageVersion + 1,
 		Message: "Updated by Scrumlr",
 	}
 	updateDate := time.Now().Format("2006-01-02")

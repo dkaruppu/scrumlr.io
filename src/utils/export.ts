@@ -24,8 +24,8 @@ export const exportAsJSON = async (id: string, name?: string) => {
   saveAs(blob, `${fileName(name ?? DEFAULT_BOARD_NAME)}.json`);
 };
 
-export const exportToConfluence = async (id: string, confluencePageId: string) => {
-  const response = await API.exportBoardToConfluence(id, confluencePageId);
+export const exportToConfluence = async (id: string, confluencePageTitle: string) => {
+  const response = await API.exportBoardToConfluence(id, confluencePageTitle);
   const json = await response.json();
   return json;
 };

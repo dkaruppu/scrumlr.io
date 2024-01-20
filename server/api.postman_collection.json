@@ -1069,14 +1069,14 @@
 						},
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"pageId\": \"<Enter the confluence page id here>\"\r\n}",
+							"raw": "{\r\n    \"pageTitle\": \"<Enter the confluence page title here>\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"description": "Export the board id to a confluence page data, given the page id in the request body. The `Content-Type` of the response will be `application/json`"
+						"description": "Export the board id to a confluence page data, given the page title in the request body. The `Content-Type` of the response will be `application/json`"
 					},
 					"response": [
 						{

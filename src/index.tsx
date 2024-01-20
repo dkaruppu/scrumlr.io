@@ -11,7 +11,7 @@ import i18n from "i18n";
 import {LoadingScreen} from "components/LoadingScreen";
 import {Actions} from "store/action";
 import {Html} from "components/Html";
-import {APP_VERSION_STORAGE_KEY, CONFLUENCE_PAGE_ID_STORAGE_KEY} from "constants/storage";
+import {APP_VERSION_STORAGE_KEY, CONFLUENCE_PAGE_TITLE_STORAGE_KEY} from "constants/storage";
 import {getFromStorage, saveToStorage} from "utils/storage";
 import {register} from "serviceWorkerRegistration";
 import Plausible from "plausible-tracker";
@@ -19,8 +19,8 @@ import {SHOW_LEGAL_DOCUMENTS, ANALYTICS_DATA_DOMAIN, ANALYTICS_SRC} from "./conf
 import "react-tooltip/dist/react-tooltip.css";
 
 const APP_VERSION = process.env.REACT_APP_VERSION;
-const confluencePageId = getFromStorage(CONFLUENCE_PAGE_ID_STORAGE_KEY);
-if (confluencePageId) store.dispatch(Actions.addPage(confluencePageId));
+const confluencePageTitle = getFromStorage(CONFLUENCE_PAGE_TITLE_STORAGE_KEY);
+if (confluencePageTitle) store.dispatch(Actions.addPage(confluencePageTitle));
 if (APP_VERSION) {
   saveToStorage(APP_VERSION_STORAGE_KEY, APP_VERSION);
 }

@@ -113,7 +113,7 @@ export const BoardAPI = {
    * Exports the board link to confluence by the specified id.
    *
    * @param board the board id
-   * @param confluencePage the confluene page id
+   * @param confluencePage the confluene page title
    *
    * @returns the response of the fetch call
    */
@@ -125,7 +125,7 @@ export const BoardAPI = {
           Accept: "application/json; charset=utf-8",
         },
         credentials: "include",
-        body: JSON.stringify({pageId: confluencePage}),
+        body: JSON.stringify({pageTitle: confluencePage}),
       });
 
       if (response.status === 200) {

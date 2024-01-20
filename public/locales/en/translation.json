@@ -9,7 +9,7 @@
     "basicConfigurationButton": "Template selection",
     "extendedConfigurationTitle": "Extended configuration",
     "basicConfigurationTitle": "Choose a template",
-    "confluencePageId": "Enter the ID for your team's retrospective confluence page"
+    "confluencePageTitle": "Enter the name of your team's retrospective confluence page"
   },
   "LoginBoard": {
     "title": "Sign in to scrumlr.io",
@@ -82,7 +82,7 @@
     "exportToClipboard": "Copy Markdown to Clipboard",
     "exportToConfluence": "Export Board Link to Confluence",
     "exportToConfluenceSuccess": "Board Link sucessfully exported to confluence!",
-    "exportToConfluenceFailure": "Board Link failed to be exported to confluence, Please check the confluence page id!",
+    "exportToConfluenceFailure": "Board Link failed to be exported to confluence, Please check the confluence page name!",
     "alreadyExportedToConfluence": "Board Link was already exported to confluence!",
     "copyToClipboardSuccess": "Markdown copied!",
     "hintHiddenColumns": "The following columns are hidden and will not be exported:"
@@ -349,7 +349,7 @@
   },
   "BoardSettings": {
     "BoardName": "Board Name",
-    "ConfluencePageId": "Retrospective Confluence Page Id",
+    "confluencePageTitle": "Retrospective Confluence Page Name",
     "AccessPolicy": "Access Policy",
     "Password": "Password",
     "SetAccessPolicyOpen": "Remove password protection",

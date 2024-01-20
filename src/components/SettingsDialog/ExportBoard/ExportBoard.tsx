@@ -22,7 +22,7 @@ export const ExportBoard: VFC = () => {
   const boardId = useAppSelector((state) => state.board.data!.id);
   const boardName = useAppSelector((state) => state.board.data!.name);
   const columns = useAppSelector((state) => state.columns);
-  const confluencePageId = useAppSelector((state) => state.confluencePage);
+  const confluencePageTitle = useAppSelector((state) => state.confluencePage);
   const [isBoardExportedToConfluence, setBoardExportedToConfluence] = useState(getFromStorage(IS_EXPORTED_TO_CONFLUENCE_STORAGE_KEY) === "true");
 
   return (
@@ -58,7 +58,7 @@ export const ExportBoard: VFC = () => {
           className="export-board__button-reverse-order"
           onClick={() => {
             if (!isBoardExportedToConfluence)
-              exportToConfluence(boardId, confluencePageId)
+              exportToConfluence(boardId, confluencePageTitle)
                 .then((result) => {
                   if (result.BoardId) {
                     setBoardExportedToConfluence(true);

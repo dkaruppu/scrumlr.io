@@ -1,9 +1,5 @@
 package dto
 
-import (
-	"net/http"
-)
-
 type ConfluencePage struct {
 	// The id of the page
 	ID string `json:"id"`
@@ -18,20 +14,10 @@ type ConfluencePage struct {
 	Title string `json:"title"`
 
 	// The version information of the page
-	Version ConfluencePageVersion `json:"version"`
+	Version ConfluencePageVersion `json:"version,omitempty"`
 
 	// The body of the page
-	Body ConfluencePageBody `json:"body"`
-}
-
-func (*ExportToConfluencePageRequest) Render(_ http.ResponseWriter, _ *http.Request) error {
-	return nil
-}
-
-// Export To Confluence Page Request.
-type ExportToConfluencePageRequest struct {
-	// The id of the confluence page
-	PageId string `json:"pageId"`
+	Body ConfluencePageBody `json:"body,omitempty"`
 }
 
 // Update Confluence Page Request
