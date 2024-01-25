@@ -26,6 +26,7 @@ export const SettingsDialog: FC = () => {
   const boardId = useAppSelector((applicationState) => applicationState.board.data!.id);
   const me = useAppSelector((applicationState) => applicationState.participants?.self.user);
   const isBoardModerator = useAppSelector((state) => state.participants?.self.role === "MODERATOR" || state.participants?.self.role === "OWNER");
+  const isBoardOwner = useAppSelector((state) => state.participants?.self.role === "OWNER");
   const feedbackEnabled = useAppSelector((state) => state.view.feedbackEnabled);
 
   const transitionConfigMobile = {
@@ -108,16 +109,18 @@ export const SettingsDialog: FC = () => {
                       <p className="navigation-item__description">{t("SettingsDialog.ShareSessionDescription")}</p>
                     </div>
                   </Link>
-                  <Link
-                    to="export"
-                    className={classNames("navigation__item", "accent-color__backlog-blue", {"navigation__item--active": window.location.pathname.endsWith("/export")})}
-                  >
-                    <ExportIcon className="navigation-item__icon" />
-                    <div className="navigation-item__content">
-                      <p className="navigation-item__name">{t("SettingsDialog.ExportBoard")}</p>
-                      <p className="navigation-item__description">{t("SettingsDialog.ExportBoardDescription")}</p>
-                    </div>
-                  </Link>
+                  {isBoardOwner && (
+                    <Link
+                      to="export"
+                      className={classNames("navigation__item", "accent-color__backlog-blue", {"navigation__item--active": window.location.pathname.endsWith("/export")})}
+                    >
+                      <ExportIcon className="navigation-item__icon" />
+                      <div className="navigation-item__content">
+                        <p className="navigation-item__name">{t("SettingsDialog.ExportBoard")}</p>
+                        <p className="navigation-item__description">{t("SettingsDialog.ExportBoardDescription")}</p>
+                      </div>
+                    </Link>
+                  )}
                   {feedbackEnabled && (
                     <Link
                       to="feedback"
