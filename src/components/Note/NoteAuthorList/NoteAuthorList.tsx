@@ -62,8 +62,8 @@ export const NoteAuthorList = (props: NoteAuthorListProps) => {
   const restUsersTitle = restAuthors.map((a) => a.displayName).join("\x0A"); // join names with line breaks
   return props.showAuthors || props.viewer.user.id === stackAuthor.user!.id ? (
     <div className="note-author-list">
-      <div className={classNames("note-author__container")}>
-        <figure className={classNames("note__author")} aria-roledescription="author" key={stackAuthor.user!.id}>
+      <div className={classNames("note-author__container--self")}>
+        <figure className={classNames("note__author--self")} aria-roledescription="author" key={stackAuthor.user!.id}>
           <UserAvatar
             id={stackAuthor.user!.id}
             avatar={stackAuthor.user!.avatar}
@@ -73,7 +73,7 @@ export const NoteAuthorList = (props: NoteAuthorListProps) => {
           />
         </figure>
 
-        <div className={classNames("note__author-name")}>{stackAuthor.displayName}</div>
+        <div className={classNames("note__author-name--self")}>{stackAuthor.displayName}</div>
       </div>
 
       <div className="note-rest-authors__container">
@@ -84,7 +84,7 @@ export const NoteAuthorList = (props: NoteAuthorListProps) => {
         ))}
 
         {restUsersExist && (
-          <figure className={classNames("note-author-rest")} title={restUsersTitle}>
+          <figure className={classNames("note-author-rest--self")} title={restUsersTitle}>
             {restAuthors.length}
           </figure>
         )}
